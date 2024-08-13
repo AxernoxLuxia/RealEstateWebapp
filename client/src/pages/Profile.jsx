@@ -28,12 +28,16 @@ export default function Profile() {
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed", (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      setFilePerc(Math.round(progress));
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePerc(Math.round(progress));
       },
       (error) => {
         setFileUploadError(true);
+        console.log(error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -60,19 +64,16 @@ export default function Profile() {
           alt=""
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
         />
-        <p className="text-sm self-center"> 
+        <p className="text-sm self-center">
           {fileUploadError ? (
             <span className="text-red-700">Error in uploading the image</span>
           ) : filePerc > 0 && filePerc < 100 ? (
-              <span className="text-slate-700">
-                {`Uploading ${filePerc}%`}
-              </span>
+            <span className="text-slate-700">{`Uploading ${filePerc}%`}</span>
           ) : filePerc == 100 ? (
-                <span className="text-green-700">
-                  Image Uploaded Successfuly!
-                </span>
-          ) : ""
-          }
+            <span className="text-green-700">Image Uploaded Successfuly!</span>
+          ) : (
+            ""
+          )}
         </p>
         <input
           type="text"
