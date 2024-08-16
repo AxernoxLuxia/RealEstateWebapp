@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
+import Listing from "../models/listing.model.js";
 
 export const test = (req, res) => {
   res.send("Hello, world!");
