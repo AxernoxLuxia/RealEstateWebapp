@@ -240,7 +240,7 @@ export default function Profile() {
             <Link to={`/listing/${listing._id}`}>
               <img src={listing.imageUrls[0]} alt="Listing Cover" className="rounded-lg h-16 w-16 object-conatain"/>
             </Link>
-            <Link className="text-slate-700 font-semibold hover:underline truncate flex-1" to={`/listing/${listing._id}`}>
+            <Link className="text-slate-700 font-semibold hover:underline truncate flex-1" to={`/listings/${listing._id}`}>
               <p>{listing.name}</p>
             </Link>
 
