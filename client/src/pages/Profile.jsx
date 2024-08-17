@@ -234,7 +234,7 @@ export default function Profile() {
         <h1 className="text-center mt-7 text-2xl font-semibold">Your Listings</h1>
         {userListings.map((listing) => (
           <div 
-            className="flex gap-4 mt-5 border rounded-lg p-3 justify-between items-center gap-4" 
+            className="flex mt-5 border rounded-lg p-3 justify-between items-center gap-4" 
             key={listing._id}
           >
             <Link to={`/listing/${listing._id}`}>
