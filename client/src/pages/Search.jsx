@@ -15,7 +15,7 @@ export default function Search() {
     });
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-    console.log(listings);
+    const [showMore, setShowMore] = useState(false);
 
     const handleChange = (e) => {
         if (
@@ -45,9 +45,9 @@ export default function Search() {
         }
 
         if (e.target.id === "sort_order") {
-            const sort = e.target.value.split("_")[0] || 'created_at';
-            const order = e.target.value.split("_")[1] || 'desc';
-            setSidebardata({...sidebardata, sort, order});
+            const sort = e.target.value.split("_")[0] || "created_at";
+            const order = e.target.value.split("_")[1] || "desc";
+            setSidebardata({ ...sidebardata, sort, order });
         }
     };
 
@@ -58,9 +58,9 @@ export default function Search() {
         urlParams.set("type", sidebardata.type);
         urlParams.set("parking", sidebardata.parking);
         urlParams.set("furnished", sidebardata.furnished);
-        urlParams.set('sort', sidebardata.sort);
-        urlParams.set('order', sidebardata.order);
-        urlParams.set('offer', sidebardata.offer);
+        urlParams.set("sort", sidebardata.sort);
+        urlParams.set("order", sidebardata.order);
+        urlParams.set("offer", sidebardata.offer);
         const searchQuery = urlParams.toString();
         navigate(`/search?${searchQuery}`);
     };
@@ -74,7 +74,7 @@ export default function Search() {
         const offerFromUrl = urlParams.get("offer");
         const sortFromUrl = urlParams.get("sort");
         const orderFromUrl = urlParams.get("order");
-        if(
+        if (
             searchTermFromUrl ||
             typeFromUrl ||
             parkingFromUrl ||
@@ -83,29 +83,46 @@ export default function Search() {
             sortFromUrl ||
             orderFromUrl
         )
-        setSidebardata({
-            searchTerm: searchTermFromUrl || '',
-            type: typeFromUrl || 'all',
-            parking: parkingFromUrl === 'true' ? true : false,
-            furnished: furnishedFromUrl === 'true' ? true : false,
-            offer: offerFromUrl === 'true' ? true : false,
-            sort: sortFromUrl || 'created_at',
-            order: orderFromUrl || 'desc',
-        });
+            setSidebardata({
+                searchTerm: searchTermFromUrl || "",
+                type: typeFromUrl || "all",
+                parking: parkingFromUrl === "true" ? true : false,
+                furnished: furnishedFromUrl === "true" ? true : false,
+                offer: offerFromUrl === "true" ? true : false,
+                sort: sortFromUrl || "created_at",
+                order: orderFromUrl || "desc",
+            });
 
         const fetchListings = async () => {
             setLoading(true);
-            const searchQuery  = urlParams.toString();
-            const res = await fetch(
-                `/api/listing/get?${searchQuery}`
-            );
+            setShowMore(false);
+            const searchQuery = urlParams.toString();
+            const res = await fetch(`/api/listing/get?${searchQuery}`);
             const data = await res.json();
+            if (data.length > 8) {
+                setShowMore(true);
+            }
             setListings(data);
             setLoading(false);
         };
         fetchListings();
-
     }, [location.search]);
+
+    const onShowMoreClick = async () => {
+        const numofListings = listings.length;
+        const urlParams = new URLSearchParams(location.search);
+        const startIndex = numofListings;
+        urlParams.set("startIndex", startIndex);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/listing/get?${searchQuery}`);
+        const data = await res.json();
+        if (data.length > 8) {
+            setShowMore(true);
+        } else {
+            setShowMore(false);
+        }
+        setListings([...listings,...data]);
+    }
 
     return (
         <div className="flex flex-col md:flex-row">
@@ -219,16 +236,28 @@ export default function Search() {
                 </h1>
                 <div className="p-7 flex flex-wrap gap-4">
                     {!loading && listings.length === 0 && (
-                        <p className="text-xl text-slate-700">No Listing Found</p>
+                        <p className="text-xl text-slate-700">
+                            No Listing Found
+                        </p>
                     )}
                     {loading && (
-                        <p className="text-xl text-slate-700 text-center w-full">Loading...</p>
+                        <p className="text-xl text-slate-700 text-center w-full">
+                            Loading...
+                        </p>
                     )}
-                    {
-                        !loading && listings &&  listings.map((listing) => (
+                    {!loading &&
+                        listings &&
+                        listings.map((listing) => (
                             <ListingItem key={listing._id} listing={listing} />
-                        ))
-                    }
+                        ))}
+                    {showMore && (
+                        <button
+                            className="text-green-700 hover:underline p-7 text-center w-full"
+                            onClick= {() => onShowMoreClick()}
+                        >
+                            Show More
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
