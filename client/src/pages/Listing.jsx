@@ -110,7 +110,7 @@ export default function Listing() {
                                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
                                     ${" "}
                                     {+listing.regularPrice -
-                                        +listing.discountPrice}
+                                        +listing.discountPrice} OFF
                                     {listing.type === "rent" && " / month"}
                                 </p>
                             )}
